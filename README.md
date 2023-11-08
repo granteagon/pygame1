@@ -13,15 +13,15 @@ $ git clone git@github.com:granteagon/pygame1.git
 ```bash
 $ python3 -m venv env # ignored by git
 ```
-2. Activate the virtual environment
+3. Activate the virtual environment
 ```bash
 $ source venv/bin/activate
 ```
-3. Install the requirements
+4. Install the requirements
 ```bash
 $ pip install -r requirements.txt
 ```
-4. Run the game
+5. Play the game!
 ```bash
 $ python3 main.py
 ```
