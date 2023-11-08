@@ -25,3 +25,8 @@ $ pip install -r requirements.txt
 ```bash
 $ python3 main.py
 ```
+
+## Roadmap
+1. Add game menu and prevent automatic exit after loss.
+2. Save game stats, high scores, etc.
+3. Better graphics.
