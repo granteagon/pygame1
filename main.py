@@ -20,6 +20,25 @@ STAR_HEIGHT = 20
 STAR_VELOCITY = 5
 hit = False
 
+# game objects
+class Player:
+    hit: bool = False
+    height: int = 75
+    width: int = 50
+    velocity: int = 5
+
+    def draw(self, window_height: int):
+        return pygame.Rect(100, window_height - self.height, self.width, self.height)
+
+class GameWindow:
+    pass
+
+class GameLoop:
+    pass
+
+class Projectile:
+    pass
+
 def draw(player, elapsed_time, stars):
     WIN.blit(BG, (0, 0))
 
@@ -38,12 +57,11 @@ def main():
     run = True
     FPS = 120
     clock = pygame.time.Clock()
-    global hit
 
     start_time = time.time()
-    elapsed_time = 0
 
-    player = pygame.Rect(100, HEIGHT - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT)
+    player = Player()
+    player_icon = player.draw(HEIGHT)
 
     star_add_interval = 2000
     star_count = 0
@@ -72,28 +90,28 @@ def main():
                 run = False
 
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT] and player.x - PLAYER_VELOCITY >= 0:
-            player.x -= PLAYER_VELOCITY
-        if keys[pygame.K_RIGHT] and player.x + PLAYER_VELOCITY + PLAYER_WIDTH <= WIDTH:
-            player.x += PLAYER_VELOCITY
+        if keys[pygame.K_LEFT] and player_icon.x - PLAYER_VELOCITY >= 0:
+            player_icon.x -= PLAYER_VELOCITY
+        if keys[pygame.K_RIGHT] and player_icon.x + PLAYER_VELOCITY + PLAYER_WIDTH <= WIDTH:
+            player_icon.x += PLAYER_VELOCITY
 
         for star in stars[:]:
             star.y += STAR_VELOCITY
 
-            if star.y + star.height >= player.y and star.colliderect(player):
-                hit = True
+            if star.y + star.height >= player_icon.y and star.colliderect(player_icon):
+                player.hit = True
 
             if star.y > HEIGHT:
                 stars.remove(star)
 
-        if hit:
+        if player.hit:
             lost_text = FONT.render("You Lost!", 1, (255, 255, 255))
             WIN.blit(lost_text, (WIDTH/2 - lost_text.get_width()/2, HEIGHT/2 - lost_text.get_height()/2))
             pygame.display.update()
             pygame.time.delay(4000)
             break
 
-        draw(player, elapsed_time, stars)
+        draw(player_icon, elapsed_time, stars)
 
     pygame.quit()
 
