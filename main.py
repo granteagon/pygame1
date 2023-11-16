@@ -10,15 +10,7 @@ pygame.display.set_caption("Lulu's Space Adventure")
 
 BG = pygame.transform.scale(pygame.image.load('space-bg.jpg'), (WIDTH, HEIGHT))
 
-PLAYER_WIDTH, PLAYER_HEIGHT = 50, 75
-PLAYER_VELOCITY = 5
-
 FONT = pygame.font.SysFont('comicsans', 30)
-
-STAR_WIDTH = 10
-STAR_HEIGHT = 20
-STAR_VELOCITY = 5
-hit = False
 
 # game objects
 class Player:
@@ -36,8 +28,18 @@ class GameWindow:
 class GameLoop:
     pass
 
+
 class Projectile:
-    pass
+    width: int = 10
+    height: int = 20
+    velocity: int = 5
+    x: int = 0
+    y: int = 0
+
+    @property
+    def shape(self):
+        return pygame.Rect(self.x, self.y, self.width, self.height)
+
 
 def draw(player, elapsed_time, stars):
     WIN.blit(BG, (0, 0))
@@ -49,9 +51,10 @@ def draw(player, elapsed_time, stars):
     pygame.draw.rect(WIN, "red", player)
 
     for star in stars:
-        pygame.draw.rect(WIN, "yellow", star)
+        pygame.draw.rect(WIN, "yellow", star.shape)
 
     pygame.display.update()
+
 
 def main():
     run = True
@@ -66,7 +69,7 @@ def main():
     star_add_interval = 2000
     star_count = 0
 
-    stars = []
+    stars: [Projectile] = []
 
     while run:
         star_count += clock.tick(FPS)
@@ -74,8 +77,9 @@ def main():
 
         if star_count > star_add_interval:
             for _ in range(3):
-                star_x = random.randint(0, WIDTH - STAR_WIDTH)
-                star = pygame.Rect(star_x, -STAR_HEIGHT, STAR_WIDTH, STAR_HEIGHT)
+                star = Projectile()
+                star.x = random.randint(0, WIDTH - star.width)
+                star.y = -star.height
                 stars.append(star)
 
             star_add_interval = max(200, star_add_interval - 50)
@@ -90,15 +94,15 @@ def main():
                 run = False
 
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT] and player_icon.x - PLAYER_VELOCITY >= 0:
-            player_icon.x -= PLAYER_VELOCITY
-        if keys[pygame.K_RIGHT] and player_icon.x + PLAYER_VELOCITY + PLAYER_WIDTH <= WIDTH:
-            player_icon.x += PLAYER_VELOCITY
+        if keys[pygame.K_LEFT] and player_icon.x - player.velocity >= 0:
+            player_icon.x -= player.velocity
+        if keys[pygame.K_RIGHT] and player_icon.x + player.velocity + player.width <= WIDTH:
+            player_icon.x += player.velocity
 
         for star in stars[:]:
-            star.y += STAR_VELOCITY
+            star.y += star.velocity
 
-            if star.y + star.height >= player_icon.y and star.colliderect(player_icon):
+            if star.y + star.height >= player_icon.y and star.shape.colliderect(player_icon):
                 player.hit = True
 
             if star.y > HEIGHT:
